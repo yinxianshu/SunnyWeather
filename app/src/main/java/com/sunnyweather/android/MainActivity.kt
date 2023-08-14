@@ -2,6 +2,7 @@ package com.sunnyweather.android
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Window
 
 class MainActivity : AppCompatActivity() {
 

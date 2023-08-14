@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ●   使用ScrollView就可以通过滚动的方式查看屏幕以外的内容。
+    ●   初始ScrollView将是隐藏起来的，不然空数据的界面看上去会很奇怪，
+        当数据请求成功才会通过代码显示出来。
+-->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/weatherLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars ="none"
+    android:overScrollMode = "never"
+    android:visibility="invisible">
+
+    <LinearLayout
+        android:orientation ="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/now" />
+        <include layout="@layout/forecast" />
+        <include layout="@layout/life_index" />
+
+    </LinearLayout>
+
+</ScrollView>

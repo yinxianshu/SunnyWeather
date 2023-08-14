@@ -2,6 +2,7 @@ package com.sunnyweather.android.ui.place
 
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sunnyweather.android.R
+import com.sunnyweather.android.ui.weather.WeatherActivity
 import kotlinx.android.synthetic.main.fragment_place.*
 
 
@@ -48,6 +50,22 @@ class PlaceFragment : Fragment() {
     @SuppressLint("FragmentLiveDataObserve", "NotifyDataSetChanged")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        // 对是否存储进行判断操作
+        if (viewModel.isPlaceSaved()) {
+            val place = viewModel.getSavedPlace()
+            // apply {}函数，返回调用者的对象本身
+            val intent = Intent(context, WeatherActivity::class.java).apply {
+
+                putExtra("location_lng", place.location.lng)
+                putExtra("location_lat", place.location.lat)
+                putExtra("place_name", place.name)
+            }
+            startActivity(intent)
+            activity?.finish()
+            return
+        }
+
         // 设置LayoutManager
         val layoutManager = LinearLayoutManager(activity)
         recyclerView.layoutManager = layoutManager
@@ -96,9 +114,9 @@ class PlaceFragment : Fragment() {
                 } else {
                     // 数据为空，提示交互信息，并打印异常在控制台。
                     Toast.makeText(activity, "未能查询到任何地点", Toast.LENGTH_SHORT)
-                            .show()
+                                             .show()
                     result.exceptionOrNull()
-                            ?.printStackTrace()
+                                             ?.printStackTrace()
                 }
             })
 

@@ -13,6 +13,17 @@ import kotlin.coroutines.suspendCoroutine
  */
 object SunnyWeatherNetwork {
 
+    // MVVM按照之前写的一样画葫芦，可以轻松扩展功能。
+    private val weatherService = ServiceCreator.create(WeatherService::class.java)
+
+    suspend fun getDailyWeather(lng: String, lat: String)
+    = weatherService.getDailyWeather(lng, lat).await()
+
+
+    suspend fun getRealtimeWeather(lng: String, lat: String)
+    = weatherService.getRealtimeWeather(lng, lat).await()
+
+
     // 创建了一个PlaceService接口的动态代理对象
     private val placeService = ServiceCreator.create<PlaceService>()
 
@@ -24,7 +35,7 @@ object SunnyWeatherNetwork {
      *      searchPlaces()函数在得到await()函数的返回值后会将该数据再返回到上一层。
      */
     suspend fun searchPlaces(query: String) = placeService.searchPlaces(query)
-                                                            .await()
+            .await()
 
     /**
      *  使用suspendCoroutine{}函数对Retrofit库中回调进行简化
