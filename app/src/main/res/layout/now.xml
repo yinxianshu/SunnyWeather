@@ -1,5 +1,6 @@
 <!-- 当前天气信息布局 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nowLayout"
     android:layout_width="match_parent"
     android:layout_height="530dp"
@@ -14,6 +15,16 @@
         android:layout_width="match_parent"
         android:fitsSystemWindows="true"
         android:layout_height="70dp">
+
+        <Button
+            android:id="@+id/navBtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="15dp"
+            android:background="@drawable/ic_home"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
         <!-- 显示城市名 -->
         <TextView
             android:id="@+id/placeName"
@@ -26,6 +37,7 @@
             android:singleLine="true"
             android:textColor="#fff"
             android:textSize="22sp" />
+
     </FrameLayout>
 
     <!-- 当前天气信息布局 -->

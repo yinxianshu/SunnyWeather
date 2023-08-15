@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sunnyweather.android.R
 import com.sunnyweather.android.logic.model.Place
 import com.sunnyweather.android.ui.weather.WeatherActivity
+import kotlinx.android.synthetic.main.activity_weather.*
 
 /**
  * RecyclerView的Adapter适配器
@@ -26,6 +27,7 @@ class PlaceAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+
         val view = LayoutInflater.from(parent.context)
                                  .inflate(R.layout.place_item, parent, false)
 
@@ -36,18 +38,36 @@ class PlaceAdapter(
         holder.itemView.setOnClickListener {
             val position = holder.adapterPosition
             val place = placeList[position]
-            val intent = Intent(parent.context, WeatherActivity::class.java).apply {
-                putExtra("location_lng", place.location.lng)
-                putExtra("location_lat", place.location.lat)
-                putExtra("place_name", place.name)
+            val activity = fragment.activity
+            /**
+             * 对PlaceFragment所处的Activity进行了判断：如果是在
+             * WeatherActivity中，那么就关闭滑动菜单。
+             */
+            if (activity is WeatherActivity) {
+                // 关闭滑动菜单
+                activity.drawerLayout.closeDrawers()
+                activity.viewModel.locationLng = place.location.lng
+                activity.viewModel.locationLat = place.location.lat
+                activity.viewModel.placeName = place.name
+                // 更新天气信息
+                activity.refreshWeather()
+            } else {
+                val intent = Intent(parent.context, WeatherActivity::class.java).apply {
+                    putExtra("location_lng", place.location.lng)
+                    putExtra("location_lat", place.location.lat)
+                    putExtra("place_name", place.name)
+                }
+                fragment.startActivity(intent)
+                activity?.finish()
             }
+            fragment.viewModel.savePlace(place)
             /**
              * 在跳转到WeatherActivity之前，先调用PlaceViewModel的
              * savePlace()方法来存储选中的城市。
              */
-            fragment.viewModel.savePlace(place)
-            fragment.startActivity(intent)
-            fragment.activity?.finish()
+            // fragment.viewModel.savePlace(place)
+            // fragment.startActivity(intent)
+            // fragment.activity?.finish()
         }
         return holder
     }

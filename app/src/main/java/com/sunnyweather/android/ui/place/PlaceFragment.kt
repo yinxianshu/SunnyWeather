@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.sunnyweather.android.MainActivity
 import com.sunnyweather.android.R
 import com.sunnyweather.android.ui.weather.WeatherActivity
 import kotlinx.android.synthetic.main.fragment_place.*
@@ -52,7 +53,13 @@ class PlaceFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         // 对是否存储进行判断操作
-        if (viewModel.isPlaceSaved()) {
+        // if (viewModel.isPlaceSaved()) {
+        /**
+         * 新增判断逻辑：
+         *      只有当PlaceFragment被嵌入MainActivity中，并且之前已经存
+         *      在选中的城市，此时才会直接跳转到WeatherActivity。
+         */
+        if (activity is MainActivity && viewModel.isPlaceSaved()){
             val place = viewModel.getSavedPlace()
             // apply {}函数，返回调用者的对象本身
             val intent = Intent(context, WeatherActivity::class.java).apply {

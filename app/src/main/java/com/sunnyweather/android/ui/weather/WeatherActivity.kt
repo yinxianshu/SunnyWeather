@@ -1,14 +1,19 @@
 package com.sunnyweather.android.ui.weather
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.sunnyweather.android.R
@@ -20,6 +25,7 @@ import kotlinx.android.synthetic.main.life_index.*
 import kotlinx.android.synthetic.main.now.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.asin
 
 /**
  * 将请求得到的数据显示到Activity界面上
@@ -30,6 +36,7 @@ class WeatherActivity : AppCompatActivity() {
         ViewModelProvider(this).get(WeatherViewModel::class.java)
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,17 +71,61 @@ class WeatherActivity : AppCompatActivity() {
                     // 没有获取到就输出提示信息和在控制台打印异常
                     Toast.makeText(
                         this, "无法成功获取天气信息", Toast.LENGTH_SHORT
-                    )
-                            .show()
-                    result.exceptionOrNull()
-                            ?.printStackTrace()
+                    ).show()
+                    result.exceptionOrNull()?.printStackTrace()
                 }
+                // 隐藏下拉刷新进度条
+                swipeRefresh.isRefreshing = false
             }
         )
 
+        // 设置下拉刷新进度条颜色
+        swipeRefresh.setColorSchemeColors(R.color.design_default_color_primary)
+        // 提取方法：刷新一次天气信息
+        refreshWeather()
+        // 下拉刷新监听器
+        swipeRefresh.setOnRefreshListener {
+            // 当触发下拉刷新操作的时候，就刷新天气。
+            refreshWeather()
+        }
+
+        // 执行一次刷新天气信息的请求
+        // viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
+
+        // 切换城市的点击事件
+        navBtn.setOnClickListener {
+            // 打开滑动菜单
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        drawerLayout.addDrawerListener(
+            // 监听DrawerLayout的状态
+            object : DrawerLayout.DrawerListener {
+                override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+                override fun onDrawerOpened(drawerView: View) {}
+                override fun onDrawerStateChanged(newState: Int) {}
+
+                // 当滑动菜单关闭时
+                override fun onDrawerClosed(drawerView: View) {
+                    val manager =
+                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    // 隐藏输入法
+                    manager.hideSoftInputFromWindow(
+                        drawerView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS
+                    )
+                }
+
+
+            }
+        )
+
+    }
+
+    fun refreshWeather() {
         // 执行一次刷新天气信息的请求
         viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
-
+        // 显示下拉刷新进度条
+        swipeRefresh.isRefreshing = true
     }
 
     /**
@@ -104,7 +155,7 @@ class WeatherActivity : AppCompatActivity() {
             val skycon = daily.skycon[i]
             val temperature = daily.temperature[i]
             val view = LayoutInflater.from(this)
-                    .inflate(R.layout.forecast_item, forecastLayout, false)
+                                     .inflate(R.layout.forecast_item, forecastLayout, false)
             val dateInfo = view.findViewById(R.id.dateInfo) as TextView
             val skyIcon = view.findViewById(R.id.skyIcon) as ImageView
             val skyInfo = view.findViewById(R.id.skyInfo) as TextView
