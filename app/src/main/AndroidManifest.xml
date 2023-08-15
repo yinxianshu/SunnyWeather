@@ -7,6 +7,16 @@
     <!--
         android:theme="@style/Theme.MaterialComponents.NoActionBar"
         隐藏标题栏
+
+        android:roundIcon="@mipmap/ic_launcher_round"
+        指定应用程序图标，只适用于7.1这个过渡系统。
+
+        android:icon="@mipmap/ic_launcher"
+        指定应用程序图标：
+            1.  在Android 8.0及以上系统中，就会使用mipmap-anydpi-v26目
+                录下的ic_launcher.xml文件来作为应用图标。
+            2.  7.0及以下系统就会使用mipmap相应分辨率目录下的
+                ic_launcher.png图片来作为应用图标。
     -->
     <application
         android:name=".SunnyWeatherApplication"
